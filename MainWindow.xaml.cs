@@ -1,7 +1,10 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 //using NETCore.Encrypt;
 using System.Globalization;
+using System.IO;
+using System.Net.Http.Headers;
 using System.Numerics;
 using System.Windows;
 using System.Windows.Media;
@@ -23,6 +26,7 @@ namespace Millonaire
         // Cryptographic vars
         BigInteger q;
         int generator = 2;
+
 
         // Для детального вида
         struct Stagelog
@@ -73,7 +77,6 @@ namespace Millonaire
         }
         private void InitializeSimpleView()
         {
-            DetailedButtonsGrid.Visibility = Visibility.Hidden;
             SimpleViewA.IsEnabled = SimpleViewB.IsEnabled = true;
             SimpleViewA.Visibility = SimpleViewB.Visibility = Visibility.Visible;
             SimpleViewResultLabelA.Text = SimpleViewResultLabelB.Text = "Введите секретное значение в поле выше";
@@ -91,7 +94,6 @@ namespace Millonaire
             // Common setup features
             if (detailed_mode) {
                 MessageBoxResult res = MessageBox.Show("В данном режиме в целях упрощения чтения этапов вычисления проводятся в кольце вычетов малого простого числа.\n" +
-                     "Убедитесь, что секретные значения не превышают 227, иначе протокол будет выполнен некорреткно\n" +
                      "Если вы хотите продолжить в упрощенном режиме (q = 227), выберите \"Да\"\n" +
                      "Если вы хотите использовать большое q, выберите \"Нет\" (большие числа будут отображаться в виде шестнадцатиричных строк)\n" +
                      "Иначе, выберите \"Отмена\"", "Использовать упрощенную форму?", MessageBoxButton.YesNoCancel);
@@ -111,6 +113,8 @@ namespace Millonaire
             }
             else TurnDetailedViewGenerator(false);
             userA_ready = userB_ready = false;
+            ExportLog.IsEnabled = false;
+            ExportLog.Visibility = Visibility.Visible;
             GridA.Visibility = GridB.Visibility = Visibility.Visible;
             GridA.IsEnabled = GridB.IsEnabled = true;
             SecretInputA.IsEnabled = SecretInputB.IsEnabled = true; 
@@ -125,8 +129,9 @@ namespace Millonaire
                                                                                 : Visibility.Hidden;
             DetailedViewA.IsEnabled = DetailedViewB.IsEnabled = detailed_mode;
 
-            DetailedButtonsGrid.Visibility = detailed_mode ? Visibility.Visible : Visibility.Hidden;
-            DetailedButtonsGrid.IsEnabled = detailed_mode;
+            DetailedButtonsGrid.Visibility = Visibility.Visible;
+            LeftArrow.Visibility =RightArrow.Visibility = detailed_mode ? Visibility.Visible : Visibility.Hidden;
+            DetailedButtonsGrid.IsEnabled = true;
         }
 
         private void HopefullyWorkingShowcase(int x, int y)
@@ -438,6 +443,7 @@ namespace Millonaire
                 {
                     ReadyButtonA.IsEnabled = ReadyButtonB.IsEnabled = false;
                     HopefullyWorkingShowcase(A_value,B_value);
+                    ExportLog.IsEnabled = true;
                     if (detailed_mode)
                     {
                         current_stage = 0;
@@ -474,6 +480,7 @@ namespace Millonaire
                 {
                     ReadyButtonA.IsEnabled = ReadyButtonB.IsEnabled = false;
                     HopefullyWorkingShowcase(A_value, B_value);
+                    ExportLog.IsEnabled = true;
                     if (detailed_mode)
                     {
                         current_stage = 0;
@@ -538,6 +545,28 @@ namespace Millonaire
         {
             Task task = new Task();
             task.ShowDialog();
+        }
+
+        private void ExportLog_Click(object sender, RoutedEventArgs e)
+        {
+            SaveFileDialog save = new SaveFileDialog();
+            if (save.ShowDialog()==true)
+            {
+                using (FileStream fs = File.Open(save.FileName, FileMode.OpenOrCreate))
+                {
+                    using (StreamWriter sw = new StreamWriter(fs)) {
+                        int i = 0;
+                        foreach (Stagelog slog in Log)
+                        {
+                            sw.WriteLine();
+                            sw.WriteLine(string.Format("Этап {0}", i));
+                            sw.WriteLine(string.Format("Сторона А:\n{0}", slog.A_Actions));
+                            sw.WriteLine(string.Format("Сторона B:\n{0}\n", slog.B_Actions));
+                            i++;
+                        }
+                    }
+                }
+            }
         }
     }
 }
