@@ -1,0 +1,32 @@
+﻿<Window x:Class="Millonaire.Task"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Millonaire"
+        mc:Ignorable="d"
+        Title="Task" Height="450" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.15*"></RowDefinition>
+            <RowDefinition Height="0.7*"></RowDefinition>
+            <RowDefinition Height="0.15*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Label FontSize="32" HorizontalAlignment="Center" VerticalAlignment="Top">Информационные материалы</Label>
+        <Button x:Name="YaoLink" Click="YaoLink_Click" Grid.Row="1" Height="35" HorizontalAlignment="Center" 
+                 VerticalAlignment="Top" Width="350" FontSize="20" Margin="10,50,0,0">Задача миллионеров Яо
+        </Button>
+        <Button x:Name="SocialistMillLink" Click="SocialistMillLink_Click"  Grid.Row="1" Height="35" HorizontalAlignment="Center" 
+                 VerticalAlignment="Top" Width="350" FontSize="20" Margin="10,100,0,0">Задача миллионеров-социалистов
+        </Button>
+        <Button x:Name="PrimitiveRootLink" Click="PrimitiveRootLink_Click" Grid.Row="1" Height="35" HorizontalAlignment="Center" 
+                 VerticalAlignment="Top" Width="350" FontSize="20" Margin="10,150,0,0">Примитивные корни модуля n
+        </Button>
+        <Button x:Name="MODPLink" Click="MODPLink_Click" Grid.Row="1" Height="35" HorizontalAlignment="Center" 
+                 VerticalAlignment="Top" Width="350" FontSize="20" Margin="10,200,0,0">Группы Диффи-Хеллмана
+        </Button>
+        <Button x:Name="CloseBtn" Click="CloseBtn_Click" Grid.Row="1" Height="35" HorizontalAlignment="Center" 
+                 VerticalAlignment="Top" Width="350" FontSize="20" Margin="10,250,0,0">Выход
+        </Button>
+    </Grid>
+</Window>
